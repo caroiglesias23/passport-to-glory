@@ -420,7 +420,9 @@ body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);mi
   </div>
 </div>
 
-<script type="module">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
 const TEAMS={
   esp:{name:'España',flag:'🇪🇸',color:'#ff4444'},
   ale:{name:'Alemania',flag:'🇩🇪',color:'#cccccc'},
@@ -464,9 +466,6 @@ const DATE_START=new Date('2026-06-22T08:00:00');
 const DATE_END=new Date('2026-07-17T18:00:00');
 
 // ── FIREBASE CONFIG ──
-import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import{getDatabase,ref,onValue,set,get}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-
 const firebaseConfig={
   apiKey:'AIzaSyDe4SeZbsh04GqBd5q1vxgkZj2nrGgfjg8',
   authDomain:'passport-to-glory.firebaseapp.com',
@@ -476,9 +475,9 @@ const firebaseConfig={
   messagingSenderId:'133767296790',
   appId:'1:133767296790:web:c1959b687f1f6b37d6c237',
 };
-const fbApp=initializeApp(firebaseConfig);
-const db=getDatabase(fbApp);
-const dbRef=ref(db,'ptg2026');
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+const dbRef=db.ref('ptg2026');
 
 let appData={points:{esp:0,ale:0,bra:0,arg:0},log:[]};
 let currentUser=null;
@@ -488,14 +487,13 @@ let adminUnlocked=false;
 let editingIndex=-1;
 
 // Escucha cambios en tiempo real desde cualquier dispositivo
-onValue(dbRef,(snapshot)=>{
+dbRef.on('value',(snapshot)=>{
   const val=snapshot.val();
   if(val){
     appData=val;
     if(!appData.log)appData.log=[];
     if(!appData.points)appData.points={esp:0,ale:0,bra:0,arg:0};
   }
-  // Re-render si la app ya está visible
   const rankScreen=document.getElementById('screen-ranking');
   if(rankScreen&&rankScreen.style.display!=='none'){
     renderRanking();
@@ -507,7 +505,7 @@ onValue(dbRef,(snapshot)=>{
 });
 
 function saveData(){
-  set(dbRef,appData).catch(e=>console.error('Firebase error:',e));
+  dbRef.set(appData).catch(e=>console.error('Firebase error:',e));
 }
 
 // ── BIENVENIDA ──
@@ -908,29 +906,6 @@ document.addEventListener('input',function(e){
     else{el.textContent=(v>0?'+':'')+v+' pts';el.style.color=v>0?'var(--pos-text)':'var(--neg-text)';}
   }
 });
-
-// ── Exponer funciones al window para que los onclick del HTML funcionen con type=module ──
-window.enterAsSpectator=enterAsSpectator;
-window.showLoginModal=showLoginModal;
-window.hideLoginModal=hideLoginModal;
-window.doLogin=doLogin;
-window.logoutUser=logoutUser;
-window.showScreen=showScreen;
-window.selectTeam=selectTeam;
-window.openQtyModal=openQtyModal;
-window.changeQty=changeQty;
-window.closeQtyModal=closeQtyModal;
-window.confirmQty=confirmQty;
-window.applyCustomPoints=applyCustomPoints;
-window.openEditModal=openEditModal;
-window.closeEditModal=closeEditModal;
-window.saveEdit=saveEdit;
-window.deleteEntry=deleteEntry;
-window.checkAdmin=checkAdmin;
-window.adminSelectTeam=adminSelectTeam;
-window.adminAddPts=adminAddPts;
-window.confirmReset=confirmReset;
-window.installPWA=installPWA;
 </script>
 </body>
 </html>
