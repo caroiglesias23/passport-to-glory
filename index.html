@@ -827,24 +827,6 @@ function renderHistorial(){
       <button class="log-delete-btn" onclick="deleteEntry(${i})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
     </div>`).join('');
 }
-  const list=document.getElementById('historial-list');
-  if(!appData.log.length){
-    list.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';return;
-  }
-  list.innerHTML=appData.log.map((l,i)=>`
-    <div class="log-item">
-      <div class="log-info">
-        <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
-        <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
-        <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
-      </div>
-      <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
-      ${currentUser?`
-        <button class="log-edit-btn" onclick="openEditModal(${i})" title="Editar"><i class="fa-solid fa-pen"></i></button>
-        <button class="log-delete-btn" onclick="deleteEntry(${i})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-      `:''}
-    </div>`).join('');
-}
 function openEditModal(idx){
   editingIndex=idx;
   const l=appData.log[idx];
