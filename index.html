@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1628">
+<meta name="description" content="Passport to Glory – Summercamp 2026">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Passport to Glory">
+<title>Passport to Glory – Summercamp 2026</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0a1628;--navy2:#0d1f3c;--navy3:#102548;
+  --gold:#F5C518;--gold2:#E8A900;
+  --white70:rgba(255,255,255,0.7);--white30:rgba(255,255,255,0.15);
+  --text:#ffffff;--muted:rgba(255,255,255,0.55);
+  --pos-bg:rgba(0,200,100,0.12);--pos-border:#00c864;--pos-text:#00e87a;
+  --neg-bg:rgba(255,60,60,0.12);--neg-border:#ff3c3c;--neg-text:#ff6b6b;
+}
+body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:24px 24px;}
+
+#welcome-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(160deg,#04090f 0%,#0a1628 40%,#071830 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:24px 24px;}
+.welcome-stars{font-size:0.6rem;letter-spacing:14px;color:var(--white30);margin-bottom:1.5rem}
+.welcome-icon{font-size:4rem;margin-bottom:0.5rem}
+.welcome-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);letter-spacing:4px;line-height:1;text-shadow:0 0 30px rgba(245,197,24,0.35)}
+.welcome-sub{color:var(--white70);font-size:0.78rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin:0.5rem 0 2.5rem}
+.btn-espectador{background:var(--gold);color:#071020;border:none;border-radius:14px;padding:1rem 2.5rem;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;cursor:pointer;width:100%;max-width:320px;
+  transition:all .2s;box-shadow:0 4px 20px rgba(245,197,24,0.3);}
+.btn-espectador:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-espectador i{margin-right:8px}
+.welcome-divider{display:flex;align-items:center;gap:12px;width:100%;max-width:320px;margin:1.2rem 0 0.8rem}
+.welcome-divider span{font-size:0.7rem;color:var(--muted);white-space:nowrap;letter-spacing:1px}
+.welcome-divider::before,.welcome-divider::after{content:'';flex:1;height:1px;background:var(--white30)}
+.btn-fifa{background:transparent;color:var(--white70);border:1px solid var(--white30);border-radius:10px;
+  padding:0.6rem 1.5rem;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;
+  width:100%;max-width:320px;transition:all .2s;}
+.btn-fifa:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,197,24,0.05)}
+.btn-fifa i{margin-right:6px;font-size:0.8rem}
+
+.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.modal-box{background:var(--navy2);border:1px solid var(--white30);border-radius:20px;padding:1.8rem 1.5rem;width:100%;max-width:360px;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:0.3rem}
+.modal-sub{font-size:0.8rem;color:var(--muted);text-align:center;margin-bottom:1.2rem}
+.modal-input{width:100%;border:1.5px solid var(--white30);border-radius:10px;padding:0.7rem 0.9rem;
+  font-family:'Nunito',sans-serif;font-size:0.95rem;background:var(--navy3);color:var(--text);margin-bottom:0.6rem;}
+.modal-input::placeholder{color:var(--muted)}
+.modal-input:focus{outline:none;border-color:var(--gold)}
+.modal-actions{display:flex;gap:0.5rem;margin-top:0.4rem}
+.btn-modal-cancel{flex:1;background:transparent;color:var(--muted);border:1px solid var(--white30);border-radius:10px;
+  padding:0.7rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:0.9rem}
+.btn-modal-ok{flex:2;background:var(--gold);color:#071020;border:none;border-radius:10px;
+  padding:0.7rem;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:0.9rem}
+
+.edit-modal{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.edit-box{background:var(--navy2);border:1px solid var(--white30);border-radius:20px;padding:1.6rem 1.4rem;width:100%;max-width:360px;}
+
+/* Modal cantidad */
+.qty-modal{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.qty-box{background:var(--navy2);border:1px solid var(--white30);border-radius:20px;padding:1.6rem 1.4rem;width:100%;max-width:320px;text-align:center;}
+.qty-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.3rem}
+.qty-label{font-size:0.82rem;color:var(--muted);margin-bottom:1rem;display:block}
+.qty-controls{display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:1.2rem}
+.qty-btn{background:var(--navy3);border:1px solid var(--white30);color:var(--text);border-radius:10px;
+  width:44px;height:44px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.qty-btn:hover{background:var(--gold);color:#071020}
+.qty-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--gold);min-width:60px;line-height:1}
+.qty-pts-preview{font-size:0.85rem;color:var(--muted);margin-bottom:1.2rem}
+.qty-pts-preview span{font-weight:800;color:var(--pos-text)}
+.qty-pts-preview.neg span{color:var(--neg-text)}
+.qty-actions{display:flex;gap:0.5rem}
+.btn-qty-cancel{flex:1;background:transparent;color:var(--muted);border:1px solid var(--white30);border-radius:10px;
+  padding:0.7rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer}
+.btn-qty-ok{flex:2;background:var(--gold);color:#071020;border:none;border-radius:10px;
+  padding:0.7rem;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:1rem}
+.edit-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--gold);margin-bottom:0.8rem}
+.edit-label{font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:4px;display:block}
+.edit-input{width:100%;border:1.5px solid var(--white30);border-radius:10px;padding:0.6rem 0.9rem;
+  font-family:'Nunito',sans-serif;font-size:0.95rem;background:var(--navy3);color:var(--text);margin-bottom:0.7rem;}
+.edit-input:focus{outline:none;border-color:var(--gold)}
+.edit-actions{display:flex;gap:0.5rem;margin-top:0.3rem}
+.btn-edit-cancel{flex:1;background:transparent;color:var(--muted);border:1px solid var(--white30);border-radius:10px;
+  padding:0.65rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer}
+.btn-edit-save{flex:2;background:var(--gold);color:#071020;border:none;border-radius:10px;
+  padding:0.65rem;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer}
+
+.user-badge{background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);border-radius:8px;
+  padding:3px 10px;font-size:0.7rem;font-weight:700;color:var(--gold);display:inline-flex;align-items:center;gap:5px;cursor:pointer;}
+.user-badge:hover{background:rgba(245,197,24,0.18)}
+
+.header{background:linear-gradient(160deg,#071020 0%,#0d2044 50%,#071020 100%);padding:1rem;
+  text-align:center;border-bottom:1px solid var(--white30);position:relative;overflow:hidden;}
+.header::before{content:'✦ ✦ ✦';position:absolute;top:8px;left:50%;transform:translateX(-50%);color:var(--white30);font-size:0.55rem;letter-spacing:12px}
+.header-top{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.header-icon{font-size:2.2rem}
+.header-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--gold);letter-spacing:4px;line-height:1;text-shadow:0 0 20px rgba(245,197,24,0.4)}
+.header-sub{color:var(--white70);font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.6rem}
+.countdown-bar{background:var(--white30);border:1px solid var(--white30);border-radius:14px;padding:0.5rem 1rem;display:inline-flex;gap:1rem;}
+.cd-unit{text-align:center}
+.cd-num{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold);line-height:1}
+.cd-label{font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+
+.nav{display:flex;background:#071020;border-bottom:1px solid var(--white30);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:100;}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{flex:1;min-width:60px;padding:0.7rem 0.3rem 0.6rem;text-align:center;color:var(--muted);cursor:pointer;border:none;
+  background:none;font-family:'Nunito',sans-serif;font-size:0.65rem;font-weight:700;transition:all .2s;border-bottom:3px solid transparent;}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(245,197,24,0.05)}
+.nav-btn i{display:block;font-size:1.1rem;margin-bottom:2px}
+
+.screen{display:none;padding:1rem;max-width:600px;margin:0 auto;padding-bottom:2rem}
+.screen.active{display:block}
+.card{background:var(--navy2);border:1px solid var(--white30);border-radius:16px;padding:1rem 1.1rem;margin-bottom:0.75rem;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--gold);margin:1rem 0 0.5rem;display:flex;align-items:center;gap:8px;}
+.section-title i{font-size:1rem;opacity:0.8}
+
+.rank-item{background:var(--navy2);border:1px solid var(--white30);border-radius:14px;padding:0.85rem 1rem;
+  margin-bottom:0.5rem;display:flex;align-items:center;gap:12px;transition:transform .15s;}
+.rank-item:hover{transform:translateX(4px)}
+.rank-num{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--muted);min-width:28px}
+.rank-num.gold-num{color:var(--gold)}
+.rank-flag{font-size:2rem}
+.rank-name{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;flex:1}
+.rank-pts{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--gold)}
+.rank-pts-label{font-size:0.6rem;color:var(--muted);text-align:right}
+.rank-bar-wrap{height:4px;background:var(--white30);border-radius:4px;margin-top:5px;overflow:hidden}
+.rank-bar{height:4px;border-radius:4px;transition:width .5s ease}
+
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:0.5rem 0 1rem;padding:0 0.5rem;}
+.podium-place{text-align:center;flex:1;max-width:90px}
+.podium-col{border-radius:10px 10px 0 0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;position:relative;}
+.podium-medal{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:1.2rem}
+.p1 .podium-col{height:85px;background:linear-gradient(180deg,#F5C518,#c9950a)}
+.p2 .podium-col{height:60px;background:linear-gradient(180deg,#c0c0c0,#8a8a8a)}
+.p3 .podium-col{height:42px;background:linear-gradient(180deg,#cd7f32,#8b5e20)}
+.p4 .podium-col{height:28px;background:var(--navy3)}
+.podium-flag{font-size:1.4rem;display:block;margin-bottom:2px}
+.podium-name{font-family:'Bebas Neue',sans-serif;font-size:0.78rem;letter-spacing:1px;color:var(--white70);margin:3px 0 1px}
+.podium-pts{font-size:0.75rem;font-weight:800;color:var(--gold)}
+
+.team-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin:0.5rem 0 0.7rem}
+.team-sel-btn{border:2px solid var(--white30);border-radius:12px;padding:0.6rem 0.5rem;text-align:center;cursor:pointer;
+  background:var(--navy2);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.86rem;color:var(--white70);transition:all .18s;}
+.team-sel-btn.active-esp{border-color:#ff3333;background:rgba(200,0,0,0.2);color:#ff6666}
+.team-sel-btn.active-ale{border-color:#aaa;background:rgba(255,255,255,0.1);color:#eee}
+.team-sel-btn.active-bra{border-color:#00dd55;background:rgba(0,180,70,0.15);color:#00dd55}
+.team-sel-btn.active-arg{border-color:#74acdf;background:rgba(116,172,223,0.15);color:#a0cbf0}
+.sel-info{font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;font-weight:600}
+.activity-btn{border:none;border-radius:12px;padding:0.75rem 1rem;display:flex;align-items:center;gap:12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.86rem;transition:all .15s;width:100%;text-align:left;margin-bottom:0.4rem;}
+.activity-btn:active{transform:scale(0.97)}
+.activity-btn.pos{background:var(--pos-bg);color:var(--pos-text);border-left:4px solid var(--pos-border)}
+.activity-btn.neg{background:var(--neg-bg);color:var(--neg-text);border-left:4px solid var(--neg-border)}
+.activity-btn i{font-size:1rem;min-width:18px}
+.pts-badge{margin-left:auto;font-size:0.82rem;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.activity-btn.pos .pts-badge{background:rgba(0,200,100,0.2);color:var(--pos-text)}
+.activity-btn.neg .pts-badge{background:rgba(255,80,80,0.2);color:var(--neg-text)}
+
+.log-item{background:var(--navy2);border:1px solid var(--white30);border-radius:12px;padding:0.7rem 1rem;margin-bottom:0.45rem;display:flex;align-items:center;gap:8px;}
+.log-info{flex:1;min-width:0}
+.log-team-tag{font-size:0.66rem;font-weight:800;padding:2px 8px;border-radius:20px;margin-bottom:3px;display:inline-block;letter-spacing:0.5px;text-transform:uppercase}
+.tag-esp{background:rgba(200,0,0,0.3);color:#ff8888}
+.tag-ale{background:rgba(255,255,255,0.15);color:#ccc}
+.tag-bra{background:rgba(0,180,70,0.25);color:#44dd88}
+.tag-arg{background:rgba(116,172,223,0.25);color:#90c0e8}
+.log-act{font-size:0.83rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-time{font-size:0.68rem;color:var(--muted)}
+.log-pts{font-weight:800;font-size:1.05rem;min-width:46px;text-align:right}
+.log-pts.pos{color:var(--pos-text)}.log-pts.neg{color:var(--neg-text)}
+.log-edit-btn,.log-delete-btn{background:none;border:none;cursor:pointer;padding:5px;border-radius:6px;transition:color .15s;font-size:0.88rem}
+.log-edit-btn{color:var(--muted)}.log-edit-btn:hover{color:var(--gold)}
+.log-delete-btn{color:var(--muted)}.log-delete-btn:hover{color:var(--neg-text)}
+
+.admin-input{width:100%;border:1.5px solid var(--white30);border-radius:10px;padding:0.65rem 0.9rem;
+  font-family:'Nunito',sans-serif;font-size:1rem;margin:0.3rem 0 0.6rem;background:var(--navy3);color:var(--text);}
+.admin-input::placeholder{color:var(--muted)}
+.admin-input:focus{outline:none;border-color:var(--gold)}
+.btn-primary{background:var(--gold);color:#071020;border:none;border-radius:10px;padding:0.72rem 1.5rem;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;width:100%;transition:background .15s}
+.btn-primary:hover{background:var(--gold2)}
+.btn-danger{background:rgba(200,0,0,0.8);color:white;border:none;border-radius:10px;padding:0.65rem 1.2rem;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;width:100%;margin-top:0.3rem}
+.msg{padding:0.65rem 1rem;border-radius:10px;margin:0.5rem 0;font-weight:700;font-size:0.88rem}
+.msg.ok{background:rgba(0,200,100,0.15);color:var(--pos-text);border:1px solid var(--pos-border)}
+.msg.err{background:rgba(255,60,60,0.15);color:var(--neg-text);border:1px solid var(--neg-border)}
+
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty-state i{font-size:2.5rem;margin-bottom:0.75rem;display:block;opacity:.3}
+.locked-notice{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.locked-notice i{font-size:3rem;margin-bottom:1rem;display:block;opacity:.3}
+.install-bar{background:var(--gold);color:#071020;text-align:center;padding:0.5rem 1rem;font-size:0.8rem;font-weight:700;display:none}
+.install-bar button{background:#071020;color:var(--gold);border:none;border-radius:6px;padding:3px 12px;font-weight:800;cursor:pointer;margin-left:8px;font-size:0.78rem}
+.pts-float{position:fixed;pointer-events:none;font-family:'Bebas Neue',sans-serif;font-size:2.4rem;font-weight:900;z-index:9999;animation:floatUp 1.3s ease-out forwards;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:1}100%{opacity:0;transform:translateY(-90px) scale(1.4)}}
+</style>
+</head>
+<body>
+
+<!-- BIENVENIDA -->
+<div id="welcome-screen">
+  <div class="welcome-stars">✦ ✦ ✦ ✦ ✦</div>
+  <img src="logo.jpg" alt="Passport to Glory" style="width:160px;height:160px;border-radius:50%;object-fit:cover;margin-bottom:0.8rem;box-shadow:0 0 30px rgba(245,197,24,0.3)">
+  <div class="welcome-title">Passport to Glory</div>
+  <div class="welcome-sub">Summercamp · 22 Jun – 17 Jul 2026</div>
+  <button class="btn-espectador" onclick="enterAsSpectator()">
+    <i class="fa-solid fa-eye"></i>Ver como Espectador
+  </button>
+  <div class="welcome-divider"><span>¿ERES INSTRUCTORA?</span></div>
+  <button class="btn-fifa" onclick="showLoginModal()">
+    <i class="fa-solid fa-futbol"></i>Usuario FIFA — Ingresar
+  </button>
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="login-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">⚽ Usuario FIFA</div>
+    <div class="modal-sub">Ingresa tus credenciales de instructora</div>
+    <input class="modal-input" type="text" id="login-user" placeholder="Usuario" autocomplete="off"
+      onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+    <input class="modal-input" type="password" id="login-pass" placeholder="Contraseña"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="login-error"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="hideLoginModal()">Cancelar</button>
+      <button class="btn-modal-ok" onclick="doLogin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="edit-modal" id="edit-modal" style="display:none">
+  <div class="edit-box">
+    <div class="edit-title">✏️ Editar Movimiento</div>
+    <label class="edit-label">Descripción</label>
+    <input class="edit-input" type="text" id="edit-act">
+    <label class="edit-label">Puntos (positivo o negativo)</label>
+    <input class="edit-input" type="number" id="edit-pts">
+    <label class="edit-label">Equipo</label>
+    <select class="edit-input" id="edit-team">
+      <option value="esp">🇪🇸 España</option>
+      <option value="ale">🇩🇪 Alemania</option>
+      <option value="bra">🇧🇷 Brasil</option>
+      <option value="arg">🇦🇷 Argentina</option>
+    </select>
+    <div id="edit-error"></div>
+    <div class="edit-actions">
+      <button class="btn-edit-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-edit-save" onclick="saveEdit()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CANTIDAD -->
+<div class="qty-modal" id="qty-modal" style="display:none">
+  <div class="qty-box">
+    <div class="qty-title" id="qty-title">Actividad</div>
+    <span class="qty-label" id="qty-label">¿Cuántas veces?</span>
+    <div class="qty-controls">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <div class="qty-num" id="qty-num">1</div>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div class="qty-pts-preview" id="qty-preview">Total: <span id="qty-total">+10 pts</span></div>
+    <div class="qty-actions">
+      <button class="btn-qty-cancel" onclick="closeQtyModal()">Cancelar</button>
+      <button class="btn-qty-ok" onclick="confirmQty()">✔ Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL BAR -->
+<div class="install-bar" id="installBar">
+  📲 Instala la app en tu celular
+  <button onclick="installPWA()">Instalar</button>
+  <button onclick="document.getElementById('installBar').style.display='none'">✕</button>
+</div>
+
+<!-- HEADER -->
+<div class="header" id="main-header" style="display:none">
+  <div class="header-top">
+    <img src="logo.jpg" alt="logo" style="width:42px;height:42px;border-radius:50%;object-fit:cover;box-shadow:0 0 10px rgba(245,197,24,0.3)">
+    <div class="header-title">Passport to Glory</div>
+    <div id="active-user-badge"></div>
+  </div>
+  <div class="header-sub">Summercamp · 22 Jun – 17 Jul 2026 · Mundial FIFA 2026</div>
+  <div>
+    <div style="font-size:0.62rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px">
+      ⏱ Tiempo para seguir acumulando puntos
+    </div>
+    <div class="countdown-bar">
+      <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-label">días</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-label">horas</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-label">min</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-label">seg</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav" style="display:none">
+  <button class="nav-btn active" onclick="showScreen('ranking')" id="nav-ranking"><i class="fa-solid fa-trophy"></i>Ranking</button>
+  <button class="nav-btn" onclick="showScreen('puntos')" id="nav-puntos"><i class="fa-solid fa-star"></i>Puntos</button>
+  <button class="nav-btn" onclick="showScreen('historial')" id="nav-historial"><i class="fa-solid fa-list"></i>Historial</button>
+  <button class="nav-btn" onclick="showScreen('admin')" id="nav-admin"><i class="fa-solid fa-gear"></i>Admin</button>
+</nav>
+
+<!-- RANKING -->
+<div class="screen active" id="screen-ranking" style="display:none">
+  <div class="section-title" style="margin-top:0.3rem"><i class="fa-solid fa-chart-bar"></i>Gráfico de puntos</div>
+  <div style="background:var(--navy2);border:1px solid var(--white30);border-radius:16px;padding:1.2rem 1rem 0.8rem;margin-bottom:0.5rem">
+    <canvas id="pts-chart" height="200"></canvas>
+  </div>
+  <div class="section-title"><i class="fa-solid fa-ranking-star"></i>Clasificación</div>
+  <div id="full-ranking"></div>
+  <div class="section-title" style="margin-top:1.2rem"><i class="fa-solid fa-clock-rotate-left"></i>Últimos movimientos</div>
+  <div id="ranking-historial"></div>
+</div>
+
+<!-- PUNTOS -->
+<div class="screen" id="screen-puntos">
+  <div id="puntos-locked" class="locked-notice" style="display:none">
+    <i class="fa-solid fa-lock"></i>
+    <p style="font-weight:700;margin-bottom:0.4rem">Solo para instructoras</p>
+    <p style="font-size:0.85rem">Inicia sesión como Usuario FIFA para registrar puntos.</p>
+    <button onclick="showLoginModal()" style="margin-top:1rem;background:var(--gold);color:#071020;border:none;
+      border-radius:10px;padding:0.65rem 1.5rem;font-family:Nunito,sans-serif;font-weight:800;cursor:pointer">
+      Iniciar sesión</button>
+  </div>
+  <div id="puntos-content" style="display:none">
+    <div class="section-title" style="margin-top:0.3rem"><i class="fa-solid fa-futbol"></i>Equipo</div>
+    <div class="team-select-grid" id="team-select-btns">
+      <button class="team-sel-btn" data-team="esp" onclick="selectTeam('esp')">🇪🇸 España</button>
+      <button class="team-sel-btn" data-team="ale" onclick="selectTeam('ale')">🇩🇪 Alemania</button>
+      <button class="team-sel-btn" data-team="bra" onclick="selectTeam('bra')">🇧🇷 Brasil</button>
+      <button class="team-sel-btn" data-team="arg" onclick="selectTeam('arg')">🇦🇷 Argentina</button>
+    </div>
+    <div class="sel-info">Equipo: <strong id="sel-team-name">🇪🇸 España</strong></div>
+    <div class="section-title"><i class="fa-solid fa-circle-plus"></i>Sumar puntos</div>
+    <div id="pos-activities"></div>
+    <div class="section-title" style="color:#ff6b6b"><i class="fa-solid fa-circle-minus"></i>Restar puntos</div>
+    <div id="neg-activities"></div>
+
+    <div class="section-title" style="color:#a78bfa"><i class="fa-solid fa-pen-to-square"></i>Puntos personalizados</div>
+    <div style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:1rem">
+      <input id="custom-label" type="text" placeholder="Concepto (ej: Ganó el concurso de canto)"
+        style="width:100%;border:1.5px solid var(--white30);border-radius:10px;padding:0.65rem 0.9rem;
+        font-family:'Nunito',sans-serif;font-size:0.95rem;background:var(--navy3);color:var(--text);margin-bottom:0.6rem">
+      <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.8rem">
+        <input id="custom-pts" type="number" placeholder="Puntos (ej: 25 o -15)"
+          style="flex:1;border:1.5px solid var(--white30);border-radius:10px;padding:0.65rem 0.9rem;
+          font-family:'Nunito',sans-serif;font-size:0.95rem;background:var(--navy3);color:var(--text)"
+          onkeydown="if(event.key==='Enter')applyCustomPoints()">
+        <div id="custom-preview" style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;min-width:70px;text-align:center;color:var(--muted)">0 pts</div>
+      </div>
+      <button onclick="applyCustomPoints()"
+        style="width:100%;background:rgba(167,139,250,0.8);color:white;border:none;border-radius:10px;
+        padding:0.75rem;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;transition:background .15s"
+        onmouseover="this.style.background='rgba(167,139,250,1)'" onmouseout="this.style.background='rgba(167,139,250,0.8)'">
+        <i class="fa-solid fa-check"></i> Aplicar puntos personalizados
+      </button>
+      <div id="custom-msg" style="margin-top:0.5rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="screen" id="screen-historial">
+  <div class="section-title" style="margin-top:0.3rem"><i class="fa-solid fa-clock-rotate-left"></i>Movimientos recientes</div>
+  <div id="historial-list"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="screen-admin">
+  <div class="card">
+    <div class="section-title" style="margin-top:0"><i class="fa-solid fa-shield-halved"></i>Panel Admin</div>
+    <div id="admin-lock">
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.7rem">Solo coordinadora. Contraseña maestra.</p>
+      <input class="admin-input" type="password" id="admin-pwd" placeholder="Contraseña maestra..."
+        onkeydown="if(event.key==='Enter')checkAdmin()">
+      <button class="btn-primary" onclick="checkAdmin()">Ingresar</button>
+      <div id="admin-msg"></div>
+    </div>
+    <div id="admin-content" style="display:none">
+      <div class="msg ok">✅ Acceso concedido</div>
+      <div style="font-weight:800;margin:1rem 0 0.4rem">Selecciona equipo</div>
+      <div class="team-select-grid">
+        <button class="team-sel-btn" data-ateam="esp" onclick="adminSelectTeam('esp')">🇪🇸 España</button>
+        <button class="team-sel-btn" data-ateam="ale" onclick="adminSelectTeam('ale')">🇩🇪 Alemania</button>
+        <button class="team-sel-btn" data-ateam="bra" onclick="adminSelectTeam('bra')">🇧🇷 Brasil</button>
+        <button class="team-sel-btn" data-ateam="arg" onclick="adminSelectTeam('arg')">🇦🇷 Argentina</button>
+      </div>
+      <div class="sel-info">Equipo: <strong id="admin-sel-name">ninguno</strong></div>
+      <input class="admin-input" type="number" id="admin-pts-input" placeholder="Puntos (ej: 50 o -30)">
+      <input class="admin-input" type="text" id="admin-reason" placeholder="Razón (opcional)">
+      <button class="btn-primary" onclick="adminAddPts()">✔ Aplicar puntos</button>
+      <div id="admin-result"></div>
+      <hr style="margin:1rem 0;border:none;border-top:1px solid var(--white30)">
+      <div style="font-weight:800;margin-bottom:0.4rem;color:var(--neg-text)">⚠️ Zona de peligro</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem">Reinicia todos los puntos a cero.</p>
+      <button class="btn-danger" onclick="confirmReset()">Reiniciar todos los puntos</button>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.8">
+      <strong style="color:var(--white70)">🏕️ Passport to Glory Summercamp 2026</strong><br>
+      Del 22 de junio al 17 de julio de 2026.<br>
+      <strong style="color:var(--white70)">Usuarios FIFA configurados:</strong><br>
+      <span id="users-list-display" style="color:var(--gold)"></span>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const TEAMS={
+  esp:{name:'España',flag:'🇪🇸',color:'#ff4444'},
+  ale:{name:'Alemania',flag:'🇩🇪',color:'#cccccc'},
+  bra:{name:'Brasil',flag:'🇧🇷',color:'#00dd55'},
+  arg:{name:'Argentina',flag:'🇦🇷',color:'#74acdf'},
+};
+const ACT_POS=[
+  {id:'participacion',   label:'Participación entusiasta, buena actitud, sigue instrucciones', pts:10, icon:'fa-solid fa-hand-fist'},
+  {id:'actitud_comp',   label:'Buena actitud competitiva que resalte',                         pts:10, icon:'fa-solid fa-trophy'},
+  {id:'servicio',       label:'Espíritu de servicio y ayuda notable',                          pts:10, icon:'fa-solid fa-hands-helping'},
+  {id:'misa',          label:'Buen comportamiento en misa',                                    pts:10, icon:'fa-solid fa-church'},
+  {id:'clases_padre',  label:'Participación relevante en clases con el padre y formación',     pts:10, icon:'fa-solid fa-book-open'},
+  {id:'respeto',       label:'Respeto sobresaliente hacia compañeras e instructoras',          pts:15, icon:'fa-solid fa-star'},
+  {id:'trabajo_equipo',label:'Buen trabajo en equipo y comunicación efectiva',                 pts:15, icon:'fa-solid fa-people-group'},
+  {id:'puntualidad',   label:'Puntualidad visible a las actividades',                          pts:10, icon:'fa-solid fa-clock'},
+  {id:'turnos',        label:'Respeta turnos y no interrumpe',                                 pts:5,  icon:'fa-solid fa-hand'},
+  {id:'actividad_obh', label:'Termina actividad a tiempo y es una OBH',                        pts:10, icon:'fa-solid fa-paintbrush'},
+];
+const ACT_NEG=[
+  {id:'mala_actitud',  label:'Se queja, desanima a las demás o no sigue instrucciones',       pts:-10, icon:'fa-solid fa-face-angry'},
+  {id:'mal_competir',  label:'Actitud pesada o brusca al competir (no sabe perder)',           pts:-10, icon:'fa-solid fa-hand-fist'},
+  {id:'no_servicial',  label:'No es servicial ni ayuda cuando lo necesitan',                   pts:-10, icon:'fa-solid fa-ban'},
+  {id:'mal_misa',      label:'Mal comportamiento en misa, clases con el padre o formación',    pts:-10, icon:'fa-solid fa-church'},
+  {id:'irrespetuosa',  label:'Irrespetuosa con compañeras e instructoras',                     pts:-15, icon:'fa-solid fa-triangle-exclamation'},
+  {id:'mal_equipo',    label:'Mal trabajo en equipo y comunicación',                           pts:-15, icon:'fa-solid fa-people-arrows'},
+  {id:'tarde',         label:'Llegar tarde a las actividades habitualmente',                   pts:-10, icon:'fa-solid fa-clock'},
+  {id:'interrumpe',    label:'Interrumpe constantemente',                                      pts:-5,  icon:'fa-solid fa-comment-slash'},
+  {id:'sin_esfuerzo',  label:'Termina la actividad a la carrera y sin esfuerzo',               pts:-10, icon:'fa-solid fa-person-running'},
+];
+
+// ── Usuarios FIFA: agrega o cambia aquí ──
+const FIFA_USERS={
+  'ALEXA':   'FIFA2026',
+  'ANALU':   'FIFA2026',
+  'CARO':    'FIFA2026',
+  'coordinadora':'admin789',
+};
+
+const ADMIN_PASSWORD='gloria2026';
+const DATE_START=new Date('2026-06-22T08:00:00');
+const DATE_END=new Date('2026-07-17T18:00:00');
+
+// ── FIREBASE CONFIG ──
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getDatabase,ref,onValue,set,get}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig={
+  apiKey:'AIzaSyDe4SeZbsh04GqBd5q1vxgkZj2nrGgfjg8',
+  authDomain:'passport-to-glory.firebaseapp.com',
+  databaseURL:'https://passport-to-glory-default-rtdb.firebaseio.com',
+  projectId:'passport-to-glory',
+  storageBucket:'passport-to-glory.firebasestorage.app',
+  messagingSenderId:'133767296790',
+  appId:'1:133767296790:web:c1959b687f1f6b37d6c237',
+};
+const fbApp=initializeApp(firebaseConfig);
+const db=getDatabase(fbApp);
+const dbRef=ref(db,'ptg2026');
+
+let appData={points:{esp:0,ale:0,bra:0,arg:0},log:[]};
+let currentUser=null;
+let selectedTeam='esp';
+let adminTeam='esp';
+let adminUnlocked=false;
+let editingIndex=-1;
+
+// Escucha cambios en tiempo real desde cualquier dispositivo
+onValue(dbRef,(snapshot)=>{
+  const val=snapshot.val();
+  if(val){
+    appData=val;
+    if(!appData.log)appData.log=[];
+    if(!appData.points)appData.points={esp:0,ale:0,bra:0,arg:0};
+  }
+  // Re-render si la app ya está visible
+  const rankScreen=document.getElementById('screen-ranking');
+  if(rankScreen&&rankScreen.style.display!=='none'){
+    renderRanking();
+  }
+  const histScreen=document.getElementById('screen-historial');
+  if(histScreen&&histScreen.classList.contains('active')){
+    renderHistorial();
+  }
+});
+
+function saveData(){
+  set(dbRef,appData).catch(e=>console.error('Firebase error:',e));
+}
+
+// ── BIENVENIDA ──
+function enterAsSpectator(){currentUser=null;showApp();}
+function showLoginModal(){
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-error').innerHTML='';
+  document.getElementById('login-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('login-user').focus(),100);
+}
+function hideLoginModal(){document.getElementById('login-modal').style.display='none';}
+function doLogin(){
+  const user=document.getElementById('login-user').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(FIFA_USERS[user]&&FIFA_USERS[user]===pass){
+    currentUser=user;hideLoginModal();showApp();
+  }else{
+    document.getElementById('login-error').innerHTML='<div class="msg err" style="margin-top:0.5rem">❌ Usuario o contraseña incorrectos</div>';
+  }
+}
+function showApp(){
+  document.getElementById('welcome-screen').style.display='none';
+  document.getElementById('main-header').style.display='block';
+  document.getElementById('main-nav').style.display='flex';
+  document.getElementById('screen-ranking').style.display='block';
+  const badge=document.getElementById('active-user-badge');
+  if(currentUser){
+    badge.innerHTML=`<span class="user-badge" onclick="logoutUser()"><i class="fa-solid fa-futbol"></i>${currentUser} <i class="fa-solid fa-xmark" style="font-size:.65rem"></i></span>`;
+  }else{
+    badge.innerHTML=`<span class="user-badge" onclick="showLoginModal()"><i class="fa-solid fa-eye"></i>Espectador</span>`;
+  }
+  // Mostrar/ocultar tabs según si es espectador o instructora
+  const isUser=!!currentUser;
+  document.getElementById('nav-puntos').style.display=isUser?'block':'none';
+  document.getElementById('nav-historial').style.display=isUser?'block':'none';
+  document.getElementById('nav-admin').style.display=isUser?'block':'none';
+
+  updatePuntosAccess();renderActivities();renderRanking();
+  setInterval(updateCountdown,1000);updateCountdown();
+  document.getElementById('users-list-display').textContent=Object.keys(FIFA_USERS).join(', ');
+}
+function logoutUser(){
+  if(confirm('¿Cerrar sesión de '+currentUser+'?')){
+    currentUser=null;
+    document.getElementById('welcome-screen').style.display='flex';
+    document.getElementById('main-header').style.display='none';
+    document.getElementById('main-nav').style.display='none';
+    document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  }
+}
+function updatePuntosAccess(){
+  document.getElementById('puntos-locked').style.display=currentUser?'none':'block';
+  document.getElementById('puntos-content').style.display=currentUser?'block':'none';
+}
+
+// ── COUNTDOWN ──
+function updateCountdown(){
+  const now=new Date();
+  if(now>DATE_END){
+    document.querySelector('.countdown-bar').innerHTML='<span style="color:var(--gold);font-family:\'Bebas Neue\',sans-serif;font-size:1rem;letter-spacing:2px">🏆 ¡Summercamp finalizado!</span>';
+    return;
+  }
+  // Siempre cuenta hacia el 17 de julio (fin del summercamp)
+  const diff=DATE_END-now;
+  document.getElementById('cd-d').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+
+// ── NAV ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  if(id==='puntos')updatePuntosAccess();
+  if(id==='ranking')renderRanking();
+  if(id==='historial')renderHistorial();
+}
+
+// ── RANKING ──
+function getRanked(){return Object.entries(appData.points).map(([k,v])=>({key:k,...TEAMS[k],pts:v})).sort((a,b)=>b.pts-a.pts);}
+
+let chartAnim=null;
+function renderRanking(){
+  const ranked=getRanked();
+  const maxPts=Math.max(...ranked.map(t=>t.pts),1);
+  document.getElementById('full-ranking').innerHTML=ranked.map((t,i)=>`
+    <div class="rank-item">
+      <span class="rank-num ${i===0?'gold-num':''}">${i+1}</span>
+      <span class="rank-flag">${t.flag}</span>
+      <div style="flex:1">
+        <div class="rank-name">${t.name}</div>
+        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.max(Math.round(t.pts/maxPts*100),2)}%;background:${t.color}"></div></div>
+      </div>
+      <div><div class="rank-pts">${t.pts}</div><div class="rank-pts-label">puntos</div></div>
+    </div>`).join('');
+
+  // Historial visible para espectadores
+  const logEl=document.getElementById('ranking-historial');
+  if(logEl){
+    if(!appData.log.length){
+      logEl.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';
+    } else {
+      logEl.innerHTML=appData.log.map(l=>`
+        <div class="log-item">
+          <div class="log-info">
+            <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
+            <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
+            <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
+          </div>
+          <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
+        </div>`).join('');
+    }
+  }
+
+  // ── GRÁFICO DE BARRAS ANIMADO ──
+  const canvas=document.getElementById('pts-chart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-32;
+  const H=200;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.scale(dpr,dpr);
+
+  const teams=[
+    {key:'esp',flag:'🇪🇸',color:'#e63946',pts:appData.points.esp||0},
+    {key:'ale',flag:'🇩🇪',color:'#adb5bd',pts:appData.points.ale||0},
+    {key:'bra',flag:'🇧🇷',color:'#2dc653',pts:appData.points.bra||0},
+    {key:'arg',flag:'🇦🇷',color:'#74acdf',pts:appData.points.arg||0},
+  ];
+  const maxVal=Math.max(...teams.map(t=>t.pts),10);
+  const pad={l:12,r:12,t:20,b:48};
+  const chartH=H-pad.t-pad.b;
+  const barW=Math.floor((W-pad.l-pad.r)/4*0.55);
+  const gap=(W-pad.l-pad.r-barW*4)/5;
+
+  if(chartAnim) cancelAnimationFrame(chartAnim);
+  let progress=0;
+  const duration=50; // frames
+
+  function draw(p){
+    ctx.clearRect(0,0,W,H);
+
+    // Grid lines
+    ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){
+      const y=pad.t+chartH*(1-i/4);
+      ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.3)';
+      ctx.font=`${Math.round(9*dpr)/dpr}px Nunito`;
+      ctx.textAlign='right';
+      ctx.fillText(Math.round(maxVal*i/4),pad.l+28,y+3);
+    }
+
+    teams.forEach((t,i)=>{
+      const x=pad.l+gap*(i+1)+barW*i;
+      const targetH=t.pts>0?(t.pts/maxVal)*chartH:0;
+      const negH=t.pts<0?(Math.abs(t.pts)/maxVal)*chartH:0;
+      const barH=targetH*p;
+      const barHneg=negH*p;
+      const baseY=pad.t+chartH;
+
+      // Barra positiva
+      if(barH>0){
+        const grad=ctx.createLinearGradient(0,baseY-barH,0,baseY);
+        grad.addColorStop(0,t.color);
+        grad.addColorStop(1,t.color+'55');
+        ctx.fillStyle=grad;
+        ctx.beginPath();
+        ctx.roundRect(x,baseY-barH,barW,barH,4);
+        ctx.fill();
+      }
+      // Barra negativa
+      if(barHneg>0){
+        ctx.fillStyle=t.color+'88';
+        ctx.beginPath();
+        ctx.roundRect(x,baseY,barW,barHneg,4);
+        ctx.fill();
+      }
+
+      // Valor encima
+      if(p===1){
+        ctx.fillStyle=t.color;
+        ctx.font=`bold ${Math.round(11*dpr)/dpr}px Nunito`;
+        ctx.textAlign='center';
+        const labelY=t.pts>=0?baseY-barH-5:baseY+barHneg+14;
+        ctx.fillText((t.pts>0?'+':'')+t.pts,x+barW/2,labelY);
+      }
+
+      // Flag emoji
+      ctx.font=`${Math.round(20*dpr)/dpr}px serif`;
+      ctx.textAlign='center';
+      ctx.fillText(t.flag,x+barW/2,H-10);
+    });
+  }
+
+  function animate(){
+    progress=Math.min(progress+1/duration,1);
+    // Ease out cubic
+    const ease=1-Math.pow(1-progress,3);
+    draw(ease);
+    if(progress<1) chartAnim=requestAnimationFrame(animate);
+    else draw(1);
+  }
+  animate();
+}
+
+// ── ACTIVIDADES ──
+function renderActivities(){
+  document.getElementById('pos-activities').innerHTML=ACT_POS.map((a,i)=>`
+    <button class="activity-btn pos" onclick="openQtyModal('pos',${i})">
+      <i class="${a.icon}"></i><span style="flex:1">${a.label}</span>
+      <span class="pts-badge">+${a.pts} pts</span>
+    </button>`).join('');
+  document.getElementById('neg-activities').innerHTML=ACT_NEG.map((a,i)=>`
+    <button class="activity-btn neg" onclick="openQtyModal('neg',${i})">
+      <i class="${a.icon}"></i><span style="flex:1">${a.label}</span>
+      <span class="pts-badge">${a.pts} pts</span>
+    </button>`).join('');
+}
+function selectTeam(t){
+  selectedTeam=t;
+  document.querySelectorAll('#team-select-btns .team-sel-btn').forEach(b=>{
+    const on=b.dataset.team===t;b.className='team-sel-btn'+(on?' active-'+t:'');b.style.transform=on?'scale(1.04)':'';
+  });
+  document.getElementById('sel-team-name').textContent=TEAMS[t].flag+' '+TEAMS[t].name;
+}
+
+// ── MODAL CANTIDAD ──
+let qtyPending={id:'',pts:0,label:'',qty:1};
+function openQtyModal(type,idx){
+  if(!currentUser)return;
+  const a = type==='pos' ? ACT_POS[idx] : ACT_NEG[idx];
+  qtyPending={id:a.id, pts:a.pts, label:a.label, qty:1};
+  document.getElementById('qty-title').textContent=a.label;
+  document.getElementById('qty-label').textContent='¿Cuántas veces aplica?';
+  document.getElementById('qty-modal').style.display='flex';
+  updateQtyDisplay();
+}
+function changeQty(delta){
+  qtyPending.qty=Math.max(1,Math.min(50,qtyPending.qty+delta));
+  updateQtyDisplay();
+}
+function updateQtyDisplay(){
+  const total=qtyPending.pts*qtyPending.qty;
+  document.getElementById('qty-num').textContent=qtyPending.qty;
+  const preview=document.getElementById('qty-preview');
+  preview.className='qty-pts-preview'+(qtyPending.pts<0?' neg':'');
+  document.getElementById('qty-total').textContent=(total>0?'+':'')+total+' pts';
+}
+function closeQtyModal(){document.getElementById('qty-modal').style.display='none';}
+function confirmQty(){
+  const totalPts=qtyPending.pts*qtyPending.qty;
+  const label=qtyPending.qty>1?`${qtyPending.label} ×${qtyPending.qty}`:qtyPending.label;
+  addPoints(qtyPending.id,totalPts,label);
+  closeQtyModal();
+}
+
+function addPoints(actId,pts,label){
+  if(!currentUser)return;
+  appData.points[selectedTeam]=(appData.points[selectedTeam]||0)+pts;
+  appData.log.unshift({team:selectedTeam,act:label,pts:pts,user:currentUser,
+    time:new Date().toLocaleString('es-SV',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'})});
+  if(appData.log.length>300)appData.log=appData.log.slice(0,300);
+  saveData();
+  showPtsFloat(pts);
+  renderRanking();
+}
+
+// ── PUNTOS PERSONALIZADOS ──
+function applyCustomPoints(){
+  const label=document.getElementById('custom-label').value.trim();
+  const pts=parseInt(document.getElementById('custom-pts').value);
+  const msg=document.getElementById('custom-msg');
+  if(!label){msg.innerHTML='<div class="msg err">Escribe el concepto</div>';return;}
+  if(isNaN(pts)||pts===0){msg.innerHTML='<div class="msg err">Ingresa un número válido (no puede ser 0)</div>';return;}
+  addPoints('custom',pts,label);
+  msg.innerHTML=`<div class="msg ok">✅ ${pts>0?'+':''}${pts} pts aplicados a ${TEAMS[selectedTeam].flag} ${TEAMS[selectedTeam].name}</div>`;
+  document.getElementById('custom-label').value='';
+  document.getElementById('custom-pts').value='';
+  document.getElementById('custom-preview').textContent='0 pts';
+  document.getElementById('custom-preview').style.color='var(--muted)';
+  setTimeout(()=>msg.innerHTML='',3000);
+}
+function showPtsFloat(pts){
+  const el=document.createElement('div');el.className='pts-float';
+  el.textContent=(pts>0?'+':'')+pts+' pts';el.style.color=pts>0?'#00e87a':'#ff6b6b';
+  el.style.left='50%';el.style.top='45%';el.style.transform='translateX(-50%)';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1400);
+}
+
+// ── HISTORIAL + EDITAR ──
+function renderHistorial(){
+  const list=document.getElementById('historial-list');
+  if(!appData.log.length){
+    list.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';return;
+  }
+  list.innerHTML=appData.log.map((l,i)=>`
+    <div class="log-item">
+      <div class="log-info">
+        <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
+        <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
+        <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
+      </div>
+      <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
+      ${currentUser?`
+        <button class="log-edit-btn" onclick="openEditModal(${i})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+        <button class="log-delete-btn" onclick="deleteEntry(${i})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+      `:''}
+    </div>`).join('');
+}
+function openEditModal(idx){
+  editingIndex=idx;
+  const l=appData.log[idx];
+  document.getElementById('edit-act').value=l.act;
+  document.getElementById('edit-pts').value=l.pts;
+  document.getElementById('edit-team').value=l.team;
+  document.getElementById('edit-error').innerHTML='';
+  document.getElementById('edit-modal').style.display='flex';
+}
+function closeEditModal(){document.getElementById('edit-modal').style.display='none';editingIndex=-1;}
+function saveEdit(){
+  if(editingIndex<0)return;
+  const newAct=document.getElementById('edit-act').value.trim();
+  const newPts=parseInt(document.getElementById('edit-pts').value);
+  const newTeam=document.getElementById('edit-team').value;
+  if(!newAct||isNaN(newPts)){document.getElementById('edit-error').innerHTML='<div class="msg err">Completa todos los campos</div>';return;}
+  const old=appData.log[editingIndex];
+  // Revertir puntos viejos, aplicar nuevos
+  appData.points[old.team]=(appData.points[old.team]||0)-old.pts;
+  appData.points[newTeam]=(appData.points[newTeam]||0)+newPts;
+  appData.log[editingIndex]={...old,act:newAct,pts:newPts,team:newTeam,edited:true};
+  saveData();closeEditModal();renderHistorial();renderRanking();
+}
+function deleteEntry(idx){
+  if(!confirm('¿Eliminar este movimiento?\nLos puntos serán revertidos automáticamente.'))return;
+  const l=appData.log[idx];
+  appData.points[l.team]=(appData.points[l.team]||0)-l.pts;
+  appData.log.splice(idx,1);
+  saveData();renderHistorial();renderRanking();
+}
+
+// ── ADMIN ──
+function checkAdmin(){
+  if(document.getElementById('admin-pwd').value===ADMIN_PASSWORD){
+    adminUnlocked=true;
+    document.getElementById('admin-lock').style.display='none';
+    document.getElementById('admin-content').style.display='block';
+  }else{document.getElementById('admin-msg').innerHTML='<div class="msg err">❌ Contraseña incorrecta</div>';}
+}
+function adminSelectTeam(t){
+  adminTeam=t;
+  document.querySelectorAll('[data-ateam]').forEach(b=>{b.className='team-sel-btn'+(b.dataset.ateam===t?' active-'+t:'');});
+  document.getElementById('admin-sel-name').textContent=TEAMS[t].flag+' '+TEAMS[t].name;
+}
+function adminAddPts(){
+  if(!adminUnlocked)return;
+  const pts=parseInt(document.getElementById('admin-pts-input').value);
+  const reason=document.getElementById('admin-reason').value.trim()||'Ajuste admin';
+  if(isNaN(pts)){document.getElementById('admin-result').innerHTML='<div class="msg err">Número inválido</div>';return;}
+  appData.points[adminTeam]=(appData.points[adminTeam]||0)+pts;
+  appData.log.unshift({team:adminTeam,act:'⚙️ '+reason,pts:pts,user:'admin',
+    time:new Date().toLocaleString('es-SV',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short'})});
+  saveData();
+  document.getElementById('admin-result').innerHTML=`<div class="msg ok">✅ ${pts>=0?'+':''}${pts} pts a ${TEAMS[adminTeam].flag} ${TEAMS[adminTeam].name}</div>`;
+  document.getElementById('admin-pts-input').value='';document.getElementById('admin-reason').value='';
+}
+function confirmReset(){
+  if(!adminUnlocked)return;
+  if(confirm('¿Reiniciar TODOS los puntos a 0?\nNo se puede deshacer.')){
+    appData={points:{esp:0,ale:0,bra:0,arg:0},log:[]};
+    saveData();
+    document.getElementById('admin-result').innerHTML='<div class="msg ok">✅ Puntos reiniciados</div>';
+    renderRanking();
+  }
+}
+
+// ── PWA ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBar').style.display='block';});
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;document.getElementById('installBar').style.display='none';}}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+selectTeam('esp');
+
+// Live preview en puntos personalizados
+document.addEventListener('input',function(e){
+  if(e.target.id==='custom-pts'){
+    const v=parseInt(e.target.value);
+    const el=document.getElementById('custom-preview');
+    if(isNaN(v)||v===0){el.textContent='0 pts';el.style.color='var(--muted)';}
+    else{el.textContent=(v>0?'+':'')+v+' pts';el.style.color=v>0?'var(--pos-text)':'var(--neg-text)';}
+  }
+});
+</script>
+</body>
+</html>
