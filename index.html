@@ -311,7 +311,6 @@ body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);mi
   <button class="nav-btn active" onclick="showScreen('ranking')" id="nav-ranking"><i class="fa-solid fa-trophy"></i>Ranking</button>
   <button class="nav-btn" onclick="showScreen('puntos')" id="nav-puntos"><i class="fa-solid fa-star"></i>Puntos</button>
   <button class="nav-btn" onclick="showScreen('historial')" id="nav-historial"><i class="fa-solid fa-list"></i>Historial</button>
-  <button class="nav-btn" onclick="showScreen('admin')" id="nav-admin"><i class="fa-solid fa-gear"></i>Admin</button>
 </nav>
 
 <!-- RANKING -->
@@ -322,7 +321,7 @@ body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);mi
   </div>
   <div class="section-title"><i class="fa-solid fa-ranking-star"></i>Clasificación</div>
   <div id="full-ranking"></div>
-  <div class="section-title" style="margin-top:1.2rem"><i class="fa-solid fa-clock-rotate-left"></i>Últimos movimientos</div>
+  <div class="section-title" style="margin-top:1.2rem" id="ranking-historial-title"><i class="fa-solid fa-clock-rotate-left"></i>Últimos movimientos</div>
   <div id="ranking-historial"></div>
 </div>
 
@@ -373,12 +372,6 @@ body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);mi
   </div>
 </div>
 
-<!-- HISTORIAL -->
-<div class="screen" id="screen-historial">
-  <div class="section-title" style="margin-top:0.3rem"><i class="fa-solid fa-clock-rotate-left"></i>Movimientos recientes</div>
-  <div id="historial-list"></div>
-</div>
-
 <!-- ADMIN -->
 <div class="screen" id="screen-admin">
   <div class="card">
@@ -418,6 +411,12 @@ body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);mi
       <span id="users-list-display" style="color:var(--gold)"></span>
     </div>
   </div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="screen" id="screen-historial">
+  <div class="section-title" style="margin-top:0.3rem"><i class="fa-solid fa-clock-rotate-left"></i>Movimientos recientes</div>
+  <div id="historial-list"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -542,7 +541,6 @@ function showApp(){
   const isUser=!!currentUser;
   document.getElementById('nav-puntos').style.display=isUser?'block':'none';
   document.getElementById('nav-historial').style.display=isUser?'block':'none';
-  document.getElementById('nav-admin').style.display=isUser?'block':'none';
 
   updatePuntosAccess();renderActivities();renderRanking();
   setInterval(updateCountdown,1000);updateCountdown();
@@ -606,21 +604,30 @@ function renderRanking(){
       <div><div class="rank-pts">${t.pts}</div><div class="rank-pts-label">puntos</div></div>
     </div>`).join('');
 
-  // Historial visible para espectadores
+  // Historial visible solo para espectadores (máximo 15 movimientos)
   const logEl=document.getElementById('ranking-historial');
+  const logTitle=document.getElementById('ranking-historial-title');
   if(logEl){
-    if(!appData.log.length){
-      logEl.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';
+    if(currentUser){
+      if(logTitle) logTitle.style.display='none';
+      logEl.style.display='none';
     } else {
-      logEl.innerHTML=appData.log.map(l=>`
-        <div class="log-item">
-          <div class="log-info">
-            <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
-            <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
-            <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
-          </div>
-          <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
-        </div>`).join('');
+      if(logTitle) logTitle.style.display='flex';
+      logEl.style.display='block';
+      const last15=appData.log.slice(0,15);
+      if(!last15.length){
+        logEl.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';
+      } else {
+        logEl.innerHTML=last15.map(l=>`
+          <div class="log-item">
+            <div class="log-info">
+              <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
+              <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
+              <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
+            </div>
+            <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
+          </div>`).join('');
+      }
     }
   }
 
@@ -817,6 +824,21 @@ function renderHistorial(){
         <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
       </div>
       <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
+      <button class="log-delete-btn" onclick="deleteEntry(${i})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+    </div>`).join('');
+}
+  const list=document.getElementById('historial-list');
+  if(!appData.log.length){
+    list.innerHTML='<div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Sin movimientos aún.</p></div>';return;
+  }
+  list.innerHTML=appData.log.map((l,i)=>`
+    <div class="log-item">
+      <div class="log-info">
+        <span class="log-team-tag tag-${l.team}">${TEAMS[l.team].flag} ${TEAMS[l.team].name}</span>
+        <div class="log-act">${l.act}${l.edited?' ✏️':''}</div>
+        <div class="log-time">${l.time}${l.user?' · '+l.user:''}</div>
+      </div>
+      <div class="log-pts ${l.pts>=0?'pos':'neg'}">${l.pts>=0?'+':''}${l.pts}</div>
       ${currentUser?`
         <button class="log-edit-btn" onclick="openEditModal(${i})" title="Editar"><i class="fa-solid fa-pen"></i></button>
         <button class="log-delete-btn" onclick="deleteEntry(${i})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
@@ -908,4 +930,4 @@ document.addEventListener('input',function(e){
 });
 </script>
 </body>
-</html> 
+</html>
