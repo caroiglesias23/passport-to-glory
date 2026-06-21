@@ -908,6 +908,29 @@ document.addEventListener('input',function(e){
     else{el.textContent=(v>0?'+':'')+v+' pts';el.style.color=v>0?'var(--pos-text)':'var(--neg-text)';}
   }
 });
+
+// ── Exponer funciones al window para que los onclick del HTML funcionen con type=module ──
+window.enterAsSpectator=enterAsSpectator;
+window.showLoginModal=showLoginModal;
+window.hideLoginModal=hideLoginModal;
+window.doLogin=doLogin;
+window.logoutUser=logoutUser;
+window.showScreen=showScreen;
+window.selectTeam=selectTeam;
+window.openQtyModal=openQtyModal;
+window.changeQty=changeQty;
+window.closeQtyModal=closeQtyModal;
+window.confirmQty=confirmQty;
+window.applyCustomPoints=applyCustomPoints;
+window.openEditModal=openEditModal;
+window.closeEditModal=closeEditModal;
+window.saveEdit=saveEdit;
+window.deleteEntry=deleteEntry;
+window.checkAdmin=checkAdmin;
+window.adminSelectTeam=adminSelectTeam;
+window.adminAddPts=adminAddPts;
+window.confirmReset=confirmReset;
+window.installPWA=installPWA;
 </script>
 </body>
 </html>
